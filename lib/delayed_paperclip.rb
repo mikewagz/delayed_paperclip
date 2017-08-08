@@ -23,11 +23,13 @@ module DelayedPaperclip
     end
 
     def process_job(instance_klass, instance_id, attachment_name)
-      instance_klass.constantize.unscoped.find(instance_id).
+      instance = instance_klass.constantize.unscoped.where(id: instance_id).first
+      return if instance.blank?
+      
+      instance.
         send(attachment_name).
-        process_delayed!
+          process_delayed!
     end
-
   end
 
   module Glue
